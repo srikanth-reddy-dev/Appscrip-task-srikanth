@@ -1,28 +1,28 @@
-async function getProduct(id: string) {
-  const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
-    cache: "no-store",
-  });
+"use client";
 
-  if (!res.ok) {
-    return null;
-  }
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-  return res.json();
-}
+export default function ProductPage() {
+  const params = useParams();
+  const id = params?.id as string;
 
-export default async function ProductPage({ params }: any) {
-  const id = params?.id;
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!id) {
-    return <h1>Invalid Product ID</h1>;
-  }
+  useEffect(() => {
+    if (!id) return;
 
-  const product = await getProduct(id);
+    fetch(`https://fakestoreapi.com/products/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProduct(data);
+        setLoading(false);
+      });
+  }, [id]);
 
-  
-  if (!product) {
-    return <h1>Product not found</h1>;
-  }
+  if (!id) return <h1>Invalid Product ID</h1>;
+  if (loading) return <h1>Loading...</h1>;
 
   return (
     <div style={{ padding: "20px" }}>
