@@ -1,21 +1,28 @@
-export const dynamic = "force-dynamic";
+"use client";
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+import { useEffect, useState } from "react";
 
-  const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
-    method: "GET",
-    cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!res.ok) {
+  useEffect(() => {
+    fetch(`https://fakestoreapi.com/products/${params.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProduct(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, [params.id]);
+
+  if (loading) return <h1>Loading...</h1>;
+
+  if (!product || !product.title) {
     return <h1>Failed to load product</h1>;
   }
-
-  const product = await res.json();
 
   return (
     <div style={{ padding: "20px" }}>
