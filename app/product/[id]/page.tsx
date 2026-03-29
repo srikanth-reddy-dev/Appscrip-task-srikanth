@@ -1,19 +1,15 @@
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+export default async function ProductPage({ params }: any) {
+  const id = params.id; // ❌ DON'T use await here
 
   const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    return <h1>Failed to load product</h1>;
-  }
-
   const product = await res.json();
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>{product.title}</h2>
+      <h1>{product.title}</h1>
 
       <img
         src={product.image}
