@@ -1,5 +1,5 @@
-export default async function ProductPage({ params }: any) {
-  const { id } = await params;
+export default async function ProductPage({ params }: { params: { id: string } }) {
+  const id = params.id;
 
   const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
     cache: "no-store",
@@ -18,16 +18,10 @@ export default async function ProductPage({ params }: any) {
       <img
         src={product.image}
         alt={product.title}
-        style={{
-          width: "300px",
-          display: "block",
-          marginBottom: "20px",
-        }}
+        style={{ width: "300px" }}
       />
 
-      <p style={{ marginBottom: "20px" }}>
-        {product.description}
-      </p>
+      <p>{product.description}</p>
 
       <h3>₹ {product.price}</h3>
     </div>
