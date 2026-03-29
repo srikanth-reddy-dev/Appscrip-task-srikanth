@@ -1,38 +1,42 @@
-type Product = {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-};
+import Link from "next/link";
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product }: any) {
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        padding: "15px",
-        textAlign: "center",
-        backgroundColor: "#fff",
-      }}
-    >
-      <img
-        src={product.image}
-        alt={product.title}
+    <Link href={`/product/${product.id}`}>
+      <div
         style={{
-          height: "150px",
-          objectFit: "contain",
-          marginBottom: "10px",
+          border: "1px solid #eee",
+          padding: "15px",
+          borderRadius: "12px",
+          cursor: "pointer",
+          transition: "0.2s",
+          background: "#fff",
         }}
-      />
+        onMouseOver={(e) =>
+          (e.currentTarget.style.transform = "scale(1.03)")
+        }
+        onMouseOut={(e) =>
+          (e.currentTarget.style.transform = "scale(1)")
+        }
+      >
+        <img
+          src={product.image}
+          alt={product.title}
+          style={{
+            width: "100%",
+            height: "200px",
+            objectFit: "contain",
+          }}
+        />
 
-      <p style={{ fontSize: "14px", fontWeight: "bold" }}>
-        {product.title}
-      </p>
+        <h3 style={{ fontSize: "16px", marginTop: "10px" }}>
+          {product.title}
+        </h3>
 
-      <p style={{ color: "green", fontWeight: "bold" }}>
-        ${product.price}
-      </p>
-    </div>
+        <p style={{ fontWeight: "bold", marginTop: "5px" }}>
+          ₹ {product.price}
+        </p>
+      </div>
+    </Link>
   );
 }
