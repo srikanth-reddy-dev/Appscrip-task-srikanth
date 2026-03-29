@@ -8,33 +8,34 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    async function fetchProduct() {
-      try {
-        const res = await fetch(`https://fakestoreapi.com/products/${params.id}`);
+    if (!params?.id) return; 
 
-        if (!res.ok) {
-          throw new Error("Product not found");
-        }
+    const fetchProduct = async () => {
+      try {
+        setError(false);
+
+        const res = await fetch(
+          `https://fakestoreapi.com/products/${params.id}`
+        );
+
+        if (!res.ok) throw new Error("Not found");
 
         const data = await res.json();
+
         setProduct(data);
       } catch (err) {
         setError(true);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchProduct();
-  }, [params.id]);
+  }, [params?.id]);
 
-  // 🔵 Loading state
   if (loading) return <h1>Loading...</h1>;
-
-  // 🔴 Error state
   if (error) return <h1>Failed to load product</h1>;
 
-  // 🟢 Success state
   return (
     <div>
       <h1>{product.title}</h1>
