@@ -1,19 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-export default function ProductPage() {
-  const params = useParams();
-  const id = params?.id as string;
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
 
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
-
-    fetch(`https://fakestoreapi.com/products/${id}`)
+    fetch(`https://fakestoreapi.com/products/${params.id}`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);
@@ -22,23 +19,45 @@ export default function ProductPage() {
       .catch(() => {
         setLoading(false);
       });
-  }, [id]);
+  }, [params.id]);
 
-  if (loading) return <h1>Loading...</h1>;
+  // Loading state
+  if (loading) return <h2 style={{ padding: "40px" }}>Loading product...</h2>;
 
+  // Error state
   if (!product || !product.title) {
-    return <h1>Failed to load product</h1>;
+    return <h2 style={{ padding: "40px" }}>Product not found</h2>;
   }
 
+  // UI
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "40px", maxWidth: "900px", margin: "auto" }}>
+      <button
+        onClick={() => router.back()}
+        style={{
+          marginBottom: "20px",
+          padding: "8px 12px",
+          cursor: "pointer",
+        }}
+      >
+        ← Back
+      </button>
+
       <h1>{product.title}</h1>
 
-      <img src={product.image} alt={product.title} width="300" />
+      <img
+        src={product.image}
+        alt={product.title}
+        style={{
+          width: "300px",
+          display: "block",
+          marginBottom: "20px",
+        }}
+      />
 
-      <p>{product.description}</p>
+      <p style={{ marginBottom: "20px" }}>{product.description}</p>
 
-      <h3>₹ {product.price}</h3>
+      <h2>₹ {product.price}</h2>
     </div>
   );
 }
