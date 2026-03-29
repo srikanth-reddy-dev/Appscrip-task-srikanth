@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+export default function ProductPage() {
+  const params = useParams();
+  const id = params?.id as string;
+
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`https://fakestoreapi.com/products/${params.id}`)
+    if (!id) return;
+
+    fetch(`https://fakestoreapi.com/products/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);
@@ -16,7 +22,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       .catch(() => {
         setLoading(false);
       });
-  }, [params.id]);
+  }, [id]);
 
   if (loading) return <h1>Loading...</h1>;
 
