@@ -1,33 +1,46 @@
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const res = await fetch(`https://fakestoreapi.com/products/${params.id}`);
+"use client";
 
-  if (!res.ok) {
-    return <h2 style={{ padding: "40px" }}>Failed to load product</h2>;
-  }
+import { useEffect, useState } from "react";
 
-  const product = await res.json();
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (!product || !product.title) {
-    return <h2 style={{ padding: "40px" }}>Product not found</h2>;
-  }
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const res = await fetch(`https://fakestoreapi.com/products/${params.id}`);
 
+        if (!res.ok) {
+          throw new Error("Product not found");
+        }
+
+        const data = await res.json();
+        setProduct(data);
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProduct();
+  }, [params.id]);
+
+  // 🔵 Loading state
+  if (loading) return <h1>Loading...</h1>;
+
+  // 🔴 Error state
+  if (error) return <h1>Failed to load product</h1>;
+
+  // 🟢 Success state
   return (
-    <div style={{ padding: "40px", maxWidth: "900px", margin: "auto" }}>
+    <div>
       <h1>{product.title}</h1>
-
-      <img
-        src={product.image}
-        alt={product.title}
-        style={{
-          width: "300px",
-          display: "block",
-          marginBottom: "20px",
-        }}
-      />
-
-      <p style={{ marginBottom: "20px" }}>{product.description}</p>
-
-      <h2>₹ {product.price}</h2>
+      <img src={product.image} width={200} />
+      <p>{product.description}</p>
+      <h3>₹ {product.price}</h3>
     </div>
   );
 }
