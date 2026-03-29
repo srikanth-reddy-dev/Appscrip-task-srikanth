@@ -5,19 +5,11 @@ export default function ProductCard({ product }: any) {
     <Link href={`/product/${product.id}`}>
       <div
         style={{
-          border: "1px solid #eee",
-          padding: "15px",
-          borderRadius: "12px",
+          border: "1px solid #ddd",
+          padding: "10px",
+          borderRadius: "10px",
           cursor: "pointer",
-          transition: "0.2s",
-          background: "#fff",
         }}
-        onMouseOver={(e) =>
-          (e.currentTarget.style.transform = "scale(1.03)")
-        }
-        onMouseOut={(e) =>
-          (e.currentTarget.style.transform = "scale(1)")
-        }
       >
         <img
           src={product.image}
@@ -29,13 +21,8 @@ export default function ProductCard({ product }: any) {
           }}
         />
 
-        <h3 style={{ fontSize: "16px", marginTop: "10px" }}>
-          {product.title}
-        </h3>
-
-        <p style={{ fontWeight: "bold", marginTop: "5px" }}>
-          ₹ {product.price}
-        </p>
+        <h3 style={{ fontSize: "16px" }}>{product.title}</h3>
+        <p style={{ fontWeight: "bold" }}>₹ {product.price}</p>
       </div>
     </Link>
   );

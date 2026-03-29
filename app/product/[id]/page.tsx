@@ -1,18 +1,15 @@
 export default async function ProductPage({ params }: any) {
   const { id } = await params;
 
-  const res = await fetch(`https://fakestoreapi.com/products/${id}`);
+  const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
+    cache: "no-store",
+  });
+
   const product = await res.json();
 
   return (
-    <div
-      style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        padding: "20px",
-      }}
-    >
-      <h1 style={{ marginBottom: "20px" }}>{product.title}</h1>
+    <div style={{ padding: "20px" }}>
+      <h2>{product.title}</h2>
 
       <img
         src={product.image}

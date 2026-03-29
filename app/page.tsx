@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 
 export default function Home() {
@@ -10,102 +10,71 @@ export default function Home() {
   const [sort, setSort] = useState("default");
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await fetch("https://fakestoreapi.com/products");
+    async function fetchData() {
+      const res = await fetch("https://fakestoreapi.com/products", {
+        cache: "no-store",
+      });
       const data = await res.json();
       setProducts(data);
-    };
+    }
 
-    fetchProducts();
+    fetchData();
   }, []);
 
-  // 🔍 FILTER
-  const filteredProducts = products.filter((product: any) => {
-    const matchesSearch = product.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
+  // 🔍 SEARCH
+  let filtered = products.filter((p) =>
+    p.title.toLowerCase().includes(search.toLowerCase())
+  );
 
-    const matchesCategory =
-      category === "all" || product.category === category;
+  // 📂 CATEGORY
+  if (category !== "all") {
+    filtered = filtered.filter((p) => p.category === category);
+  }
 
-    return matchesSearch && matchesCategory;
-  });
-
-  // 🔄 SORT
-  const sortedProducts = [...filteredProducts];
-
+  // 🔃 SORT
   if (sort === "low") {
-    sortedProducts.sort((a, b) => a.price - b.price);
+    filtered.sort((a, b) => a.price - b.price);
   } else if (sort === "high") {
-    sortedProducts.sort((a, b) => b.price - a.price);
+    filtered.sort((a, b) => b.price - a.price);
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "1200px",
-        margin: "0 auto",
-        padding: "20px",
-      }}
-    >
-      <h1
-        style={{
-          textAlign: "center",
-          marginBottom: "20px",
-          fontSize: "28px",
-        }}
-      >
-        Products
-      </h1>
+    <div style={{ padding: "20px" }}>
+      <h1 style={{ textAlign: "center" }}>Products</h1>
 
-      {/* 🔍 FILTER BAR */}
-      <div
+      {/* SEARCH */}
+      <input
+        type="text"
+        placeholder="Search products..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         style={{
-          display: "flex",
-          gap: "10px",
+          padding: "10px",
+          width: "100%",
           marginBottom: "20px",
         }}
-      >
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            padding: "10px",
-            flex: 1,
-          }}
-        />
+      />
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          style={{ padding: "10px" }}
-        >
+      {/* FILTERS */}
+      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        <select onChange={(e) => setCategory(e.target.value)}>
           <option value="all">All</option>
           <option value="men's clothing">Men</option>
           <option value="women's clothing">Women</option>
           <option value="electronics">Electronics</option>
-          <option value="jewelery">Jewelery</option>
+          <option value="jewelery">Jewelry</option>
         </select>
 
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          style={{ padding: "10px" }}
-        >
+        <select onChange={(e) => setSort(e.target.value)}>
           <option value="default">Sort</option>
-          <option value="low">Low → High</option>
-          <option value="high">High → Low</option>
+          <option value="low">Price Low → High</option>
+          <option value="high">Price High → Low</option>
         </select>
       </div>
 
-      {/* 🔢 COUNT */}
-      <p style={{ marginBottom: "10px" }}>
-        {sortedProducts.length} products found
-      </p>
+      <p>{filtered.length} products found</p>
 
-      {/* 🧱 GRID */}
+      {/* GRID */}
       <div
         style={{
           display: "grid",
@@ -113,7 +82,7 @@ export default function Home() {
           gap: "20px",
         }}
       >
-        {sortedProducts.map((product: any) => (
+        {filtered.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
